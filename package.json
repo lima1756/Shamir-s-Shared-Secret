@@ -1,6 +1,6 @@
 {
-  "name": "shamirs-sharing-secret",
-  "productName": "shamirs-sharing-secret",
+  "name": "shamirs-secret-sharing",
+  "productName": "shamirs-secret-sharing",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
@@ -32,17 +32,17 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "shamirs_sharing_secret"
+        "name": "shamirs_secret_sharing"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
       "github_repository": {
-        "owner": "",
-        "name": ""
+        "owner": "lima1756",
+        "name": "Shamir-s-Shared-Secret"
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "shamirssharingsecret"
+        "name": "shamirsSecretSharing"
       }
     }
   },
