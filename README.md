@@ -61,7 +61,7 @@ The present project is an application developed with Javascript with NodeJS, Ele
 
 ## How to use
 
-After opening the distributable or executing in development mode, you can encrypt or decrypt files.
+After opening the distributable or executing in development mode, you can encrypt or decrypt files. For the numeric inputs, it's recommended to use the keyboard arrow keys (up, down) to change the value.
 
 ### Encrypt
 
@@ -83,3 +83,8 @@ After all this, your file will be ready on the same location as the original but
 6. Click the "Generate" button
 
 If the keys were correct, then your file will be at the same location as the encrypted one, with the new name in case you did step 4.
+
+### Limitations
+
+* 2<=Total keys<=50
+* 2<=Required keys<=9  && Required keys<=Total keys

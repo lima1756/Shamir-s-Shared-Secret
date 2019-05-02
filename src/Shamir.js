@@ -1,11 +1,18 @@
 import fs, { write } from 'fs';
+let math = require('mathjs');
 var crypto = require('crypto');
 const zlib = require('zlib');
 const { Transform } = require('stream');
 
+math.config({
+    number: 'BigNumber', // Default type of number:
+                       // 'number' (default), 'BigNumber', or 'Fraction'
+  precision: 128
+})
+
 const maxSecret = 99999999 - 100000;
-const maxCoefficient = 50;
-const maxValue = 600;
+const maxCoefficient = 100;
+const maxValue = 50;
 
 class Shamir{
 
@@ -31,7 +38,7 @@ class Shamir{
         return keys;
     }
 
-    static cypher(total, required, file){
+    static cypher(total, required, file, success){
         const secret = Math.ceil(Math.random()*maxSecret+100000)
         const pwd = crypto.createHash('sha256').update(String(secret), 'utf-8').digest();
         // console.log(secret);
@@ -52,7 +59,10 @@ class Shamir{
             .pipe(gzip)
             .pipe(cipher)
             .pipe(appendInitVect)
-            .pipe(writeStream);
+            .pipe(writeStream)
+            .on('finish', ()=>{
+                success()
+            });;
         
         return this.generateKeys(total, required, secret);
     }
@@ -90,36 +100,39 @@ class Shamir{
         let error = false;
 
         try{
+            readInitVect.on('error', (err)=>{
+                errorHandler(err);
+                error = true;
+            })
             readInitVect.on('close', () => {
-                const readStream = fs.createReadStream(file.path, { start: 16 });
-                const decipher = crypto.createDecipheriv('aes-256-cbc', pwd, initVect);
-                const unzip = zlib.createUnzip();
-                const writeStream = fs.createWriteStream(path);
-
-                readStream
-                .pipe(decipher).on('error',(err)=>{
-                    if(!error){
-                        errorHandler(err); 
-                        error=true;
+                if(!error){
+                    const readStream = fs.createReadStream(file.path, { start: 16 });
+                    const decipher = crypto.createDecipheriv('aes-256-cbc', pwd, initVect);
+                    const unzip = zlib.createUnzip();
+                    const writeStream = fs.createWriteStream(path);
+    
+                    let handle = (err)=>{
+                        if(!error){                        
+                            errorHandler(err); 
+                            error=true;
+                        }
+                        if(error){
+                            writeStream.close();
+                            writeStream.end();
+                            readStream.close();
+                        }
                     }
-                })
-                .pipe(unzip).on('error',(err)=>{
-                    if(!error){
-                        errorHandler(err); 
-                        error=true;
-                    }
-                })
-                .pipe(writeStream).on('error',(err)=>{
-                    if(!error){                        
-                        errorHandler(err); 
-                        error=true;
-                    }
-                })
-                .on('finish', ()=>{
-                    if(!error){
-                        success();
-                    }
-                });
+    
+                    readStream
+                    .pipe(decipher).on('error',handle)
+                    .pipe(unzip).on('error',handle)
+                    .pipe(writeStream).on('error',handle)
+                    .on('finish', ()=>{
+                        if(!error){
+                            success();
+                        }
+                    });
+                }
             });
         }
         catch(err){
@@ -129,17 +142,22 @@ class Shamir{
     }
 
     static obtainKeys(required, keys){
-        let sum = 0;
+        let sum = math.bignumber(0);
         for(let i = 0; i < required; i++){
-            let product = keys[i].fx;
+            let product = math.bignumber(keys[i].fx);
             for(let j = 0; j < required; j++){
                 if(j !== i){
-                    product *= (( 0 - keys[j].x ) / ( keys[i].x - keys[j].x ))
+                    product = math.multiply(
+                        math.divide( 
+                            math.bignumber(math.subtract(math.bignumber(0), math.bignumber(keys[j].x) )), 
+                            math.bignumber(math.subtract( math.bignumber(keys[i].x), math.bignumber(keys[j].x) ))
+                        ), math.bignumber(product)
+                    )
                 }
             }
-            sum += product;
+            sum = math.sum(product, sum);
         }
-        return sum;
+        return sum.toNumber();
     }
 }
 

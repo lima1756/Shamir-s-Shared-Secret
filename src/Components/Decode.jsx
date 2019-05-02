@@ -29,7 +29,7 @@ export default class Encode extends React.Component{
 
     handleTotalChange(event){
         const val = parseInt(event.target.value);
-        if(val >= 2 && val <= 400){
+        if(val >= 2 && val <= 9){
             if(val>this.state.total){
                 let keys = [...this.state.keys]
                 for(let i = keys.length; i<val; i++){
@@ -52,6 +52,10 @@ export default class Encode extends React.Component{
     }
 
     execute(){
+        if(this.state.file.name===''){
+            alert("Please select a file to decrypt");
+            return;
+        }
         Shamir.decypher(this.state.total, this.state.keys, this.state.file, this.state.newFile, ()=>{alert("Your file is ready");}, (err)=>{console.log(err);alert("There was an error, please check that you entered all the requried correct keys")})
     }
 

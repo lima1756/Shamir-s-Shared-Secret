@@ -26,14 +26,17 @@ export default class Encode extends React.Component{
 
     handleTotalChange(event){
         const val = parseInt(event.target.value);
-        if(val >= 2 && val <= 400){
+        if(val >= 2 && val <= 50){
             this.setState({total:val})
+            if(val< this.state.required){
+                this.setState({required:val})
+            }
         }
     }
 
     handleRequiredChange(event){
         const val = parseInt(event.target.value);
-        if(val >= 2 && val<=this.state.total){
+        if(val >= 2 && val<=this.state.total && val<=9){
             this.setState({required:val})
         }
     }
@@ -58,13 +61,17 @@ export default class Encode extends React.Component{
     }
 
     execute(){
+        if(this.state.file.name===''){
+            alert("Please select a file to encrypt");
+            return;
+        }
         this.setState({status:Encode.STATE_LOADING});
-        let keys = Shamir.cypher(this.state.total, this.state.required, this.state.file);
+        let keys = Shamir.cypher(this.state.total, this.state.required, this.state.file, ()=>{alert("File encrypted!")});
         this.setState({
             keys: keys,
             status: Encode.STATE_LOADED
         })
-        console.log(Shamir.obtainKeys(6, [keys[0], keys[1], keys[8], keys[3], keys[9], keys[12]]))
+        //console.log(Shamir.obtainKeys(9, [keys[0], keys[1], keys[2], keys[3], keys[9], keys[12], keys[10], keys[4], keys[5], keys[6], keys[7]]))
     }
 
     selectFile(){
