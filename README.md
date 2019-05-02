@@ -6,6 +6,7 @@
 * [Description](#Description)
 * [Getting Started](#Getting-Started)
 * [How to use](#How-to-use)
+* [Limitations](#Limitations)
 
 ## Introduction
 
@@ -32,7 +33,7 @@ It DOESN'T supports:
 
 ### Technologies
 
-The present project is an application developed with Javascript with NodeJS, Electron, Electron-Forge, and ReactJS. These tools were decided because the facility they give to build multiplatform desktop applications.
+The present project is an application developed with Javascript with NodeJS, Electron, Electron-Forge, and ReactJS, MathJS. These tools were decided because the facility they give to build multiplatform desktop applications.
 
 ## Getting Started
 
@@ -84,7 +85,7 @@ After all this, your file will be ready on the same location as the original but
 
 If the keys were correct, then your file will be at the same location as the encrypted one, with the new name in case you did step 4.
 
-### Limitations
+## Limitations
 
 * 2<=Total keys<=50
 * 2<=Required keys<=9  && Required keys<=Total keys
